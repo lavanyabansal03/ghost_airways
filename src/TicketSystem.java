@@ -1,11 +1,16 @@
 import java.util.*;
 
+// Main system class for Ghost Airways ticket management
 public class TicketSystem {
+    // Stores all created tickets
     private List<Ticket> tickets = new ArrayList<>();
+    // Scanner for user input
     private Scanner scanner = new Scanner(System.in);
 
+    // Main system loop - displays menu and processes user choices
     public void run() {
         while (true) {
+            // Display main menu options
             System.out.println("\nGHOST AIRWAYS TICKETING SYSTEM");
             System.out.println("1. Add New Ticket");
             System.out.println("2. View All Tickets");
@@ -13,39 +18,45 @@ public class TicketSystem {
             System.out.println("4. Exit");
             System.out.print("Select option: ");
 
+            // Get and validate user choice
             int choice = getValidChoice(4);
 
+            // Process menu selection
             switch (choice) {
                 case 1:
-                    addTicket();
+                    addTicket();  // Create new ticket
                     break;
                 case 2:
-                    displayAllTickets();
+                    displayAllTickets();  // Show all tickets
                     break;
                 case 3:
-                    searchTickets();
+                    searchTickets();  // Search tickets
                     break;
                 case 4:
                     System.out.println("Thank you for using Ghost Airways!");
-                    return;
+                    return;  // Exit program
             }
         }
     }
 
+    // Creates and adds a new ticket to the system
     private void addTicket() {
+        // Step 1: Select ticket class
         Ticket ticket = createTicket();
-        if (ticket == null) return;
+        if (ticket == null) return;  // Exit if invalid selection
 
-        // Offer class-specific options
+        // Step 2: Offer class-specific options
         ticket.offerOptions(scanner);
 
-        // Offer upgrades
+        // Step 3: Offer general upgrades
         offerUpgrades(ticket);
 
+        // Add completed ticket to collection
         tickets.add(ticket);
         System.out.println("\nTICKET CREATED:\n" + ticket);
     }
 
+    // Creates a ticket based on selected class
     private Ticket createTicket() {
         System.out.println("\nSELECT CLASS:");
         System.out.println("1. Steerage");
@@ -56,6 +67,7 @@ public class TicketSystem {
 
         int choice = getValidChoice(4);
 
+        // Instantiate appropriate ticket class
         switch (choice) {
             case 1: return new SteerageTicket();
             case 2: return new CoachTicket();
@@ -65,6 +77,7 @@ public class TicketSystem {
         }
     }
 
+    // Offers available upgrades for any ticket class
     private void offerUpgrades(Ticket ticket) {
         System.out.println("\nAVAILABLE UPGRADES:");
         System.out.println("1. Thrill Seeker (Boeing 737 MAX)");
@@ -74,14 +87,16 @@ public class TicketSystem {
 
         int choice = getValidChoice(3);
 
+        // Add selected upgrade
         if (choice == 1) {
             ticket.addUpgrade("Thrill Seeker");
         } else if (choice == 2) {
             ticket.addUpgrade("Wingman");
-            selectWing(ticket);
+            selectWing(ticket);  // Additional option for Wingman
         }
     }
 
+    // Handles wing selection for Wingman upgrade
     private void selectWing(Ticket ticket) {
         System.out.println("\nSELECT WING:");
         System.out.println("1. Left Wing");
@@ -91,6 +106,7 @@ public class TicketSystem {
 
         int choice = getValidChoice(3);
 
+        // Add wing selection as an option
         if (choice == 1) {
             ticket.addOption("Left Wing Selection");
         } else if (choice == 2) {
@@ -98,19 +114,23 @@ public class TicketSystem {
         }
     }
 
+    // Displays all tickets sorted by class and options
     private void displayAllTickets() {
         if (tickets.isEmpty()) {
             System.out.println("No tickets available!");
             return;
         }
 
+        // Sort tickets using Ticket's compareTo method
         Collections.sort(tickets);
+
         System.out.println("\nALL TICKETS:");
         for (Ticket t : tickets) {
-            System.out.println(t + "\n---");
+            System.out.println(t + "\n---");  // Uses Ticket's toString()
         }
     }
 
+    // Searches tickets based on criteria
     private void searchTickets() {
         System.out.println("\nSEARCH BY:");
         System.out.println("1. Thrill Seeker Upgrade");
@@ -121,19 +141,20 @@ public class TicketSystem {
         int choice = getValidChoice(3);
         List<Ticket> results = new ArrayList<>();
 
+        // Filter tickets based on search criteria
         for (Ticket t : tickets) {
             switch (choice) {
-                case 1:
+                case 1:  // Thrill Seeker
                     if (t.getUpgrades().contains("Thrill Seeker")) {
                         results.add(t);
                     }
                     break;
-                case 2:
+                case 2:  // Wingman
                     if (t.getUpgrades().contains("Wingman")) {
                         results.add(t);
                     }
                     break;
-                case 3:
+                case 3:  // Basic tickets
                     if (t.getOptions().isEmpty() && t.getUpgrades().isEmpty()) {
                         results.add(t);
                     }
@@ -141,6 +162,7 @@ public class TicketSystem {
             }
         }
 
+        // Display search results
         if (results.isEmpty()) {
             System.out.println("No matching tickets found!");
         } else {
@@ -151,17 +173,18 @@ public class TicketSystem {
         }
     }
 
+    // Validates user input is within allowed range
     private int getValidChoice(int maxOption) {
         while (true) {
             try {
                 int choice = scanner.nextInt();
-                scanner.nextLine();
+                scanner.nextLine();  // Consume newline
                 if (choice >= 1 && choice <= maxOption) {
                     return choice;
                 }
                 System.out.print("Please enter 1-" + maxOption + ": ");
             } catch (Exception e) {
-                scanner.nextLine();
+                scanner.nextLine();  // Clear invalid input
                 System.out.print("Invalid input. Please enter a number: ");
             }
         }
